@@ -22,10 +22,6 @@ include::partial$toc.adoc[]
 
 _This section is non-normative._
 
-=== Scope
-
-IMPORTANT: For purposes of the Community Specification License, the link:https://github.com/creator-assertions/endorsement-assertion/blob/main/scope.md[`scope.md` document] at the root of this project’s GitHub repository is the governing document of this specification’s scope.
-
 === Overview
 
 _<<_endorsement,Endorsements>>_ are a way of indicating approval of three possible actions (see xref:_permitted_actions[xrefstyle=full]) that could be applied to an _<<C2PA asset>>_ described by a _<<C2PA Manifest>>_ in which the _<<C2PA asset>>_ is used as an ingredient.
