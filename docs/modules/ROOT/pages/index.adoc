@@ -6,7 +6,7 @@
 
 An _<<_endorsement,endorsement>>_ is a way of indicating approval for specific actions made on content after it has had a _<<C2PA Manifest>>_ attached. (See xref:_generating_an_endorsement[xrefstyle=full].) The *endorsement assertion* is where an _<<_endorsement,endorsement>>_ from the signer of an ingredient _<<C2PA asset>>_ (known here as an _<<_endorser,endorser>>_) is stored. These _<<_endorsement,endorsements>>_ are typically provided (out-of-band of this specification) by ingredient _<<C2PA asset>>_ signers to actors those signers trust to perform the actions listed in the assertion (known here as _<<_endorsee,endorsees>>_). They are used by a validator when assessing whether the actions of the active _<<C2PA Manifest>>_ are “endorsed” or not. (See xref:_validation[xrefstyle=full].)
 
-Version 1.0 *Draft 05 May 2024* · xref:_version_history[]
+Version 1.0 *Draft 14 April 2025* · xref:_version_history[]
 
 [#maintainers]
 *Maintainers:*

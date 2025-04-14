@@ -14,3 +14,7 @@ _This section is non-normative._
 *05 May 2024*
 
 * Substantial rewrite, introducing the terms _<<_endorser,endorser>>_ and _<<_endorsee,endorsee>>,_ and clarifying the workflow for each role.
+
+*14 April 2025*
+
+* Transition to DIF draft specification.
