@@ -1,0 +1,126 @@
+= Migration from Endorsement to ODRL
+
+== Overview
+
+This document provides guidance for migrating from the CAWG Endorsement Assertion to the ODRL Permissions Assertion.
+
+== Field Mapping
+
+The following table shows the one-to-one mapping from Endorsement fields to ODRL properties:
+
+[cols="2,2,2"]
+|===
+|Endorsement Field |ODRL Property |Notes
+
+|`endorser`
+|`assigner`
+|Identity must be verifiable via CAWG Identity assertion
+
+|`endorsee`
+|`assignee`
+|Identity must be verifiable via CAWG Identity assertion
+
+|`notValidBefore`
+|`constraint` with `leftOperand: "odrl:dateTime"` and `operator: "odrl:gteq"`
+|Expressed as ODRL constraint
+
+|`notValidAfter`
+|`constraint` with `leftOperand: "odrl:dateTime"` and `operator: "odrl:lteq"`
+|Expressed as ODRL constraint
+
+|`c2pa.actions`
+|`action` in `permission`
+|Same action list, but within ODRL permission structure
+
+|Endorsement COSE signature
+|Manifest claim signature + CAWG Identity assertion
+|Relies on manifest signature and identity binding
+|===
+
+== JSON Transform Example
+
+=== Original Endorsement
+
+[source,json]
+----
+{
+  "endorser": "did:web:originvault.io",
+  "endorsee": "did:web:licensee.example",
+  "notValidBefore": "2024-01-01T00:00:00Z",
+  "notValidAfter": "2026-12-31T23:59:59Z",
+  "c2pa.actions": [{
+    "action": "c2pa.transcoded",
+    "parameters": {
+      "ingredient": "self#jumbf=c2pa/…/c2pa.assertions/c2pa.ingredient"
+    }
+  }]
+}
+----
+
+=== Migrated ODRL Policy
+
+[source,json]
+----
+{
+  "@context": [
+    "https://www.w3.org/ns/odrl.jsonld",
+    "https://cawg.io/contexts/odrl-c2pa/v1"
+  ],
+  "@type": "Offer",
+  "uid": "urn:uuid:odrl-offer-123",
+  "profile": "https://cawg.io/profiles/odrl-c2pa/v1",
+  "assigner": "did:web:originvault.io",
+  "assignee": "did:web:licensee.example",
+  "permission": [{
+    "target": "self#jumbf=c2pa/…/c2pa.assertions/c2pa.ingredient",
+    "action": "c2pa.transcoded",
+    "constraint": [
+      {
+        "leftOperand": "odrl:dateTime",
+        "operator": "odrl:gteq",
+        "rightOperand": "2024-01-01T00:00:00Z"
+      },
+      {
+        "leftOperand": "odrl:dateTime",
+        "operator": "odrl:lteq",
+        "rightOperand": "2026-12-31T23:59:59Z"
+      }
+    ]
+  }],
+  "cawg:assertionRef": "self#jumbf=c2pa/…/c2pa.assertions/cawg.identity",
+  "cawg:ingredient": "self#jumbf=c2pa/…/c2pa.assertions/c2pa.ingredient"
+}
+----
+
+== Key Changes
+
+=== 1. Structure
+
+* Endorsement: Flat structure with direct fields
+* ODRL: Hierarchical structure with `permission` array containing `action` and `constraint` arrays
+
+=== 2. Identity Verification
+
+* Endorsement: COSE signature for authenticity
+* ODRL: Manifest claim signature + CAWG Identity assertion binding
+
+=== 3. Validity Periods
+
+* Endorsement: Direct `notValidBefore`/`notValidAfter` fields
+* ODRL: ODRL constraints with `leftOperand: "odrl:dateTime"`
+
+=== 4. Actions
+
+* Endorsement: `c2pa.actions` array with parameters
+* ODRL: `action` within `permission` array, with target binding via `cawg:ingredient`
+
+== Migration Checklist
+
+- [ ] Update JSON structure to ODRL format
+- [ ] Convert validity periods to ODRL constraints
+- [ ] Add required `@context` and `@type` fields
+- [ ] Set `profile` to CAWG ODRL profile IRI
+- [ ] Add `cawg:assertionRef` pointing to CAWG Identity assertion
+- [ ] Add `cawg:ingredient` pointing to ingredient assertion
+- [ ] Remove COSE signature (rely on manifest signature)
+- [ ] Test validation against ODRL schema

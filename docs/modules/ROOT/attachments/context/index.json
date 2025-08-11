@@ -1,28 +1,167 @@
 {
   "@context": {
     "@protected": true,
-    "cawg":  "https://cawg.io/identity#",
-    "schema":"https://schema.org/",
-    "xsd":   "http://www.w3.org/2001/XMLSchema#",
+    "cawg": "https://cawg.io/identity/1.2/ica/#",
+    "schema": "https://schema.org/",
+    "odrl": "https://www.w3.org/ns/odrl/2/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
 
-    "c2paAsset":          "cawg:c2paAsset",
-    "manifestHash":       "cawg:manifestHash",
-    "manifestAlg":        "cawg:manifestAlg",
-    "manifestUrl":        "@id",
-
-    "endorsement":        "cawg:endorsement",
-    "endorsedActions":    "cawg:endorsedActions",
-    "constraints":        "cawg:constraints",
-
-    "endorser": {
-      "@id": "cawg:endorser",
+    "ForwardPermissionsCredential": "cawg:ForwardPermissionsCredential",
+    "termsOfUse": "cawg:termsOfUse",
+    
+    "C2PAAssetBinding": "cawg:C2PAAssetBinding",
+    "referenced_assertions": {
+      "@id": "cawg:referenced_assertions",
       "@container": "@set"
     },
-    "endorsee": {
-      "@id": "cawg:endorsee",
+    "hash": "cawg:hash",
+    "alg": "cawg:alg",
+    
+    "role": {
+      "@id": "cawg:role",
       "@container": "@set"
     },
-    "role":   "schema:roleName",
-    "name":   "schema:name"
+    
+    "delegatedTo": {
+      "@id": "cawg:delegatedTo",
+      "@type": "@id"
+    },
+    
+    "permittedActions": {
+      "@id": "cawg:permittedActions",
+      "@container": "@set"
+    },
+    
+    "odrlPolicy": "odrl:Policy",
+    "uid": "odrl:uid",
+    "permission": {
+      "@id": "odrl:permission",
+      "@container": "@set"
+    },
+    "prohibition": {
+      "@id": "odrl:prohibition", 
+      "@container": "@set"
+    },
+    "obligation": {
+      "@id": "odrl:obligation",
+      "@container": "@set"
+    },
+    "target": "odrl:target",
+    "action": "odrl:action",
+    "constraint": {
+      "@id": "odrl:constraint",
+      "@container": "@set"
+    },
+    "leftOperand": "odrl:leftOperand",
+    "operator": "odrl:operator", 
+    "rightOperand": "odrl:rightOperand",
+    
+    "issuerIdentity": "cawg:issuerIdentity",
+    "icacReference": "cawg:icacReference",
+    "icacHash": "cawg:icacHash",
+    "minimalClaims": {
+      "@id": "cawg:minimalClaims",
+      "@container": "@set"
+    },
+    "identityClaim": "cawg:identityClaim",
+    "claimType": "cawg:claimType",
+    "claimValue": "cawg:claimValue",
+    
+    "expected_countersigners": {
+      "@id": "cawg:expected_countersigners",
+      "@container": "@set"
+    },
+    "expected_credentials": "cawg:expected_credentials",
+    
+    "nonceBinding": "cawg:nonceBinding",
+    "nonce": "cawg:nonce",
+    "salt": "cawg:salt",
+    "hashAlgorithm": "cawg:hashAlgorithm",
+
+    "CreativeWork": "schema:CreativeWork",
+    "Person": "schema:Person",
+    "Organization": "schema:Organization",
+    "Action": "schema:Action",
+    "DigitalDocument": "schema:DigitalDocument",
+    "ImageObject": "schema:ImageObject",
+    "VideoObject": "schema:VideoObject",
+    "AudioObject": "schema:AudioObject",
+    "MediaObject": "schema:MediaObject",
+    
+    "creator": "schema:creator",
+    "author": "schema:author",
+    "publisher": "schema:publisher",
+    "copyrightHolder": "schema:copyrightHolder",
+    "copyrightYear": "schema:copyrightYear",
+    "license": "schema:license",
+    "usageInfo": "schema:usageInfo",
+    
+    "name": "schema:name",
+    "description": "schema:description",
+    "identifier": "schema:identifier",
+    "url": "schema:url",
+    "contentUrl": "schema:contentUrl",
+    "encodingFormat": "schema:encodingFormat",
+    "fileSize": "schema:fileSize",
+    "width": "schema:width",
+    "height": "schema:height",
+    "duration": "schema:duration",
+    
+    "dateCreated": "schema:dateCreated",
+    "dateModified": "schema:dateModified",
+    "datePublished": "schema:datePublished",
+    "validFrom": "vc:validFrom",
+    "validThrough": "schema:validThrough",
+    
+    "location": "schema:location",
+    "geo": "schema:geo",
+    "address": "schema:address",
+    "addressCountry": "schema:addressCountry",
+    
+    "audience": "schema:audience",
+    "genre": "schema:genre",
+    "keywords": "schema:keywords",
+    "category": "schema:category",
+    
+    "isPartOf": "schema:isPartOf",
+    "hasPart": "schema:hasPart",
+    "isBasedOn": "schema:isBasedOn",
+    "isBasedOnUrl": "schema:isBasedOnUrl",
+    "derivedFrom": "schema:derivedFrom",
+    
+    "recipient": "schema:recipient",
+    "object": "schema:object",
+    "result": "schema:result",
+    "instrument": "schema:instrument",
+    
+    "potentialAction": "schema:potentialAction",
+    "actionStatus": "schema:actionStatus",
+    "agent": "schema:agent",
+    "startTime": "schema:startTime",
+    "endTime": "schema:endTime",
+    
+    "credential": "schema:credential",
+    "validIn": "schema:validIn",
+    "educationalLevel": "schema:educationalLevel",
+    
+    "contactPoint": "schema:contactPoint",
+    "email": "schema:email",
+    "telephone": "schema:telephone",
+    "faxNumber": "schema:faxNumber",
+    "sameAs": "schema:sameAs",
+    "knowsAbout": "schema:knowsAbout",
+    "knows": "schema:knows",
+    "worksFor": "schema:worksFor",
+    "memberOf": "schema:memberOf",
+    
+    "monetaryAmount": "schema:monetaryAmount",
+    "currency": "schema:currency",
+    "value": "schema:value",
+    "minValue": "schema:minValue",
+    "maxValue": "schema:maxValue",
+    
+    "quantitativeValue": "schema:quantitativeValue",
+    "unitText": "schema:unitText",
+    "unitCode": "schema:unitCode"
   }
 }

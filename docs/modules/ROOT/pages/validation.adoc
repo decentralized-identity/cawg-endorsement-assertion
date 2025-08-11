@@ -1,0 +1,100 @@
+= Validation Algorithm
+
+== Overview
+
+This document provides the normative validation algorithm for ODRL Permissions Assertions in C2PA manifests.
+
+== Preconditions
+
+The validator MUST ensure the following preconditions are met:
+
+1. Exactly one `c2pa.actions` assertion exists in the manifest
+2. Exactly one relevant `c2pa.ingredient` assertion exists and is linked
+3. One ODRL policy assertion per policy being evaluated
+4. All required CAWG Identity assertions are present
+
+== Validation Steps
+
+=== 1. Atomic Expansion
+
+The validator MUST expand compact ODRL policies into atomic rules following ODRL specification requirements.
+
+=== 2. Profile Validation
+
+* Check that `profile` equals `https://cawg.io/profiles/odrl-c2pa/v1`
+* Verify all actions are from the allowed C2PA action list
+
+=== 3. Identity Binding
+
+* Resolve `cawg:assertionRef` to the CAWG Identity assertion
+* Verify `assigner` and `assignee` identities against CAWG Identity assertion
+* Check cryptographic continuity between CAWG Identity assertion and signer keys
+
+=== 4. Target Binding
+
+* Resolve `cawg:ingredient` to the ingredient assertion
+* Cross-check that it matches the ingredient referenced by `c2pa.actions.parameters.ingredient`
+
+=== 5. Constraint Evaluation
+
+* Evaluate all `constraint` elements (date, territory, purpose, etc.)
+* Handle timezone and date format requirements
+* Apply constraint operators (`lt`, `lteq`, `gteq`, `eq`)
+
+=== 6. Obligation Evaluation
+
+* Evaluate `obligation` duties only for machine-checkable cases
+* Surface non-machine-checkable obligations as "non-verifiable obligations"
+
+=== 7. Conflict Resolution
+
+* Apply conflict strategy (default: `invalid`)
+* Handle policy conflicts according to ODRL specification
+
+=== 8. Status Attestation
+
+* If `cawg:status` is present, treat as attestation (does not override objective checks)
+
+== Result Classification
+
+The validator MUST return one of the following results:
+
+* `valid` - All checks pass
+* `valid-with-nonverifiable-obligations` - Valid but has non-machine-checkable obligations
+* `invalid` - One or more checks fail
+* `indeterminate` - Cannot determine validity due to missing information
+
+== Error Codes
+
+[cols="1,3,1"]
+|===
+|Code |Description |Severity
+
+|ODRL-001
+|Invalid profile
+|Error
+
+|ODRL-002
+|Identity binding failure
+|Error
+
+|ODRL-003
+|Target binding failure
+|Error
+
+|ODRL-004
+|Constraint violation
+|Error
+
+|ODRL-005
+|Action not in allowed list
+|Error
+
+|ODRL-006
+|Missing required assertion
+|Error
+
+|ODRL-007
+|Non-verifiable obligation
+|Warning
+|===

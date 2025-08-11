@@ -18,3 +18,32 @@ _This section is non-normative._
 *14 April 2025*
 
 * Transition to DIF draft specification.
+
+*15 July 2025*
+
+* Complete transition from endorsement assertion to Forward Permissions Credential (FPC) system.
+* Introduced Identity Claims Aggregation Credential (ICAC) concept for identity assurance.
+* Added ODRL policy integration for machine-readable permissions.
+* Updated terminology from endorser/endorsee to licensor/licensee.
+* Enhanced validation process to include ICAC verification and ODRL policy validation.
+
+*25 August 2025*
+
+* Aligned FPC schema with CAWG Identity Assertion proposal.
+* Moved ODRL policies to termsOfUse level for VP compatibility.
+* Added C2PAAssetBinding structure for unified asset binding.
+* Introduced delegation support via delegatedTo field.
+* Added comprehensive documentation on alignment with identity assertions.
+* Enhanced schema.org integration for semantic interoperability and discoverability.
+* Added Verifiable Presentation (VP) example demonstrating holder-signed permissions and CAWG 1.2 workflow.
+
+*December 2024*
+
+* **ODRL Permissions Assertion 1.0-draft**: Complete replacement of Endorsement Assertion with ODRL-based approach.
+* Introduced CAWG ODRL Profile for C2PA with standard ODRL 2.2 compliance.
+* Added JSON-LD context for C2PA-specific extensions.
+* Implemented Offer → Agreement workflow for permission delegation.
+* Enhanced identity binding through CAWG Identity assertions.
+* Added comprehensive validation algorithm with atomic policy expansion.
+* Provided migration guide from Endorsement to ODRL model.
+* **Endorsement Assertion deprecated** in favor of ODRL Permissions Assertion.

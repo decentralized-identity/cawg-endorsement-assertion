@@ -1,0 +1,26 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/odrl.jsonld",
+    "https://cawg.io/contexts/odrl-c2pa/v1"
+  ],
+  "@type": "Agreement",
+  "uid": "urn:uuid:odrl-agreement-456",
+  "inheritFrom": "urn:uuid:odrl-offer-123",
+  "profile": "https://cawg.io/profiles/odrl-c2pa/v1",
+  "assigner": "did:web:originvault.io",
+  "assignee": "did:web:licensee.example",
+  "permission": [{
+    "target": "self#jumbf=c2pa/…/c2pa.assertions/c2pa.ingredient",
+    "action": "c2pa.transcoded"
+  }],
+  "obligation": [{
+    "action": "odrl:attribute",
+    "constraint": [{
+      "leftOperand": "odrl:attribution",
+      "operator": "odrl:eq",
+      "rightOperand": "© Jane Creator via OriginVault"
+    }]
+  }],
+  "cawg:assertionRef": "self#jumbf=c2pa/…/c2pa.assertions/cawg.identity",
+  "cawg:ingredient": "self#jumbf=c2pa/…/c2pa.assertions/c2pa.ingredient"
+}

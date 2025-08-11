@@ -1,0 +1,60 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "odrl": "https://www.w3.org/ns/odrl#",
+    "cawg": "https://cawg.io/ns/odrl-c2pa#",
+    "c2pa": "https://c2pa.org/ns/actions#",
+    
+    "cawg:assertionRef": {
+      "@id": "cawg:assertionRef",
+      "@type": "@id",
+      "@comment": "JUMBF reference to the local CAWG Identity assertion for identity binding"
+    },
+    
+    "cawg:ingredient": {
+      "@id": "cawg:ingredient", 
+      "@type": "@id",
+      "@comment": "JUMBF reference to the single c2pa.ingredient used as the target scope"
+    },
+    
+    "cawg:actions": {
+      "@id": "cawg:actions",
+      "@type": "@id",
+      "@container": "@list",
+      "@comment": "Allowed C2PA action values: c2pa.published, c2pa.transcoded, c2pa.repackaged"
+    },
+    
+    "cawg:targetC2PA": {
+      "@id": "cawg:targetC2PA",
+      "@type": "@id", 
+      "@comment": "JUMBF of the target policy object (e.g., manifest or asset reference)"
+    },
+    
+    "cawg:status": {
+      "@id": "cawg:status",
+      "@type": "@vocab",
+      "@comment": "Compliance state: valid, expired, delinquent, revoked"
+    },
+    
+    "cawg:profile": {
+      "@id": "cawg:profile",
+      "@type": "@id",
+      "@comment": "Profile identifier for policies"
+    },
+    
+    "c2pa.published": {
+      "@id": "c2pa:published",
+      "@comment": "Permission to publish the asset"
+    },
+    
+    "c2pa.transcoded": {
+      "@id": "c2pa:transcoded", 
+      "@comment": "Permission to transcode the asset"
+    },
+    
+    "c2pa.repackaged": {
+      "@id": "c2pa:repackaged",
+      "@comment": "Permission to repackage the asset"
+    }
+  }
+}

@@ -1,0 +1,179 @@
+= Conformance
+
+== Overview
+
+This document defines the conformance requirements for ODRL Permissions Assertions in C2PA manifests.
+
+== Conformance Classes
+
+=== Authoring
+
+Implementations that create ODRL Permissions Assertions MUST conform to the following requirements:
+
+[cols="1,2,1"]
+|===
+|Requirement |Description |Level
+
+|MUST
+|Use valid ODRL JSON-LD syntax
+|MUST
+
+|MUST
+|Include required `@context` with ODRL and CAWG profile
+|MUST
+
+|MUST
+|Set `@type` to `Offer` or `Agreement`
+|MUST
+
+|MUST
+|Set `profile` to CAWG ODRL profile IRI
+|MUST
+
+|MUST
+|Include at least one `permission` with valid `action`
+|MUST
+
+|MUST
+|Include `cawg:assertionRef` pointing to CAWG Identity assertion
+|MUST
+
+|MUST
+|Include `cawg:ingredient` pointing to ingredient assertion
+|MUST
+
+|MUST
+|Use only allowed C2PA actions in `action` values
+|MUST
+
+|SHOULD
+|Include `uid` for policy identification
+|SHOULD
+
+|SHOULD
+|Use atomic policy structure (one target per permission)
+|SHOULD
+|===
+
+=== Embedding
+
+Implementations that embed ODRL Permissions Assertions in C2PA manifests MUST conform to the following requirements:
+
+[cols="1,2,1"]
+|===
+|Requirement |Description |Level
+
+|MUST
+|Place assertion in C2PA assertion store with appropriate label
+|MUST
+
+|MUST
+|Ensure CAWG Identity assertion is present in same manifest
+|MUST
+
+|MUST
+|Ensure ingredient assertion is present and linked
+|MUST
+
+|MUST
+|Ensure `c2pa.actions` assertion references same ingredient
+|MUST
+
+|SHOULD
+|Use label `cawg.odrlPermissions` for assertion
+|SHOULD
+
+|SHOULD
+|Include proper JUMBF self-links for references
+|SHOULD
+|===
+
+=== Validation
+
+Implementations that validate ODRL Permissions Assertions MUST conform to the following requirements:
+
+[cols="1,2,1"]
+|===
+|Requirement |Description |Level
+
+|MUST
+|Validate JSON-LD syntax and expansion
+|MUST
+
+|MUST
+|Check profile matches CAWG ODRL profile IRI
+|MUST
+
+|MUST
+|Verify identity binding via CAWG Identity assertion
+|MUST
+
+|MUST
+|Verify target binding via ingredient assertion
+|MUST
+
+|MUST
+|Validate all actions are in allowed list
+|MUST
+
+|MUST
+|Evaluate all constraints according to ODRL specification
+|MUST
+
+|MUST
+|Apply conflict strategy (default: `invalid`)
+|MUST
+
+|MUST
+|Return standardized result codes
+|MUST
+
+|SHOULD
+|Surface non-verifiable obligations as warnings
+|SHOULD
+
+|SHOULD
+|Provide detailed error messages with error codes
+|SHOULD
+|===
+
+== Interoperability Requirements
+
+=== JSON-LD Processing
+
+* MUST support JSON-LD 1.1 expansion and compaction
+* MUST handle context resolution for ODRL and CAWG profiles
+* SHOULD support JSON-LD framing for consistent output
+
+=== ODRL Compliance
+
+* MUST implement ODRL 2.2 specification requirements
+* MUST support atomic policy expansion
+* MUST handle constraint evaluation according to ODRL rules
+
+=== C2PA Integration
+
+* MUST integrate with C2PA manifest validation
+* MUST support JUMBF reference resolution
+* MUST verify cryptographic continuity with manifest signatures
+
+== Test Requirements
+
+Implementations MUST pass the following test categories:
+
+1. **Syntax Tests**: Valid and invalid JSON-LD structures
+2. **Schema Tests**: Validation against JSON Schema
+3. **Identity Tests**: CAWG Identity assertion binding
+4. **Target Tests**: Ingredient assertion binding
+5. **Constraint Tests**: Date, territory, and other constraint evaluation
+6. **Conflict Tests**: Policy conflict resolution
+7. **Integration Tests**: End-to-end C2PA manifest validation
+
+== Certification
+
+Conformant implementations may be certified through the CAWG certification process, which includes:
+
+* Automated test suite validation
+* Manual review of implementation
+* Interoperability testing with other conformant implementations
+* Security and privacy assessment
