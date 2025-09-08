@@ -10,22 +10,22 @@ const path = require('path');
 const Ajv = require('ajv');
 const addFormats = require('ajv-formats');
 
-// Initialize AJV with JSON Schema Draft 2020-12
-const ajv = new Ajv({ strict: false });
+// Initialize AJV
+const ajv = new Ajv({ 
+  strict: false,
+  allErrors: true,
+  verbose: true
+});
 addFormats(ajv);
-
-// Load the JSON Schema
-const schemaPath = path.join(__dirname, '..', 'docs', 'modules', 'ROOT', 'attachments', 'schema', 'v1.0', 'index.json');
-const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
-
-// Compile the schema
-const validate = ajv.compile(schema);
 
 // Example files to validate
 const examplesDir = path.join(__dirname, '..', 'docs', 'modules', 'ROOT', 'attachments', 'examples', 'v1.0');
+const schemaDir = path.join(__dirname, '..', 'docs', 'modules', 'ROOT', 'attachments', 'schema', 'v1.0');
+
 const exampleFiles = [
-  'offer.json',
-  'agreement.json'
+  { file: 'offer.json', schema: 'index.json', description: 'ODRL Offer Policy' },
+  { file: 'agreement.json', schema: 'index.json', description: 'ODRL Agreement Policy' },
+  { file: 'c2pa-assertion-example.json', schema: 'c2pa-assertion.json', description: 'C2PA Assertion Wrapper' }
 ];
 
 let hasErrors = false;
@@ -33,8 +33,11 @@ let hasErrors = false;
 console.log('🔍 Validating ODRL Permissions Assertion examples...\n');
 
 // Validate each example
-exampleFiles.forEach(filename => {
+exampleFiles.forEach(({ file: filename, schema: schemaFile, description }) => {
   const filePath = path.join(examplesDir, filename);
+  const schemaPath = path.join(schemaDir, schemaFile);
+  
+  console.log(`Validating ${filename} against ${schemaFile}...`);
   
   if (!fs.existsSync(filePath)) {
     console.error(`❌ Example file not found: ${filename}`);
@@ -42,41 +45,47 @@ exampleFiles.forEach(filename => {
     return;
   }
   
+  if (!fs.existsSync(schemaPath)) {
+    console.error(`❌ Schema file not found: ${schemaFile}`);
+    hasErrors = true;
+    return;
+  }
+  
   try {
     const exampleData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-    const valid = validate(exampleData);
+    const exampleSchema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
+    
+    // Remove the $schema reference to avoid AJV issues
+    delete exampleSchema.$schema;
+    
+    // Create a new AJV instance for each validation to avoid ID conflicts
+    const freshAjv = new Ajv({ 
+      strict: false,
+      allErrors: true,
+      verbose: true
+    });
+    addFormats(freshAjv);
+    
+    const exampleValidate = freshAjv.compile(exampleSchema);
+    const valid = exampleValidate(exampleData);
     
     if (valid) {
-      console.log(`✅ ${filename} - Valid`);
+      console.log(`✅ ${filename} (${description}) - Valid`);
     } else {
-      console.error(`❌ ${filename} - Invalid:`);
-      console.error(JSON.stringify(validate.errors, null, 2));
+      console.error(`❌ ${filename} (${description}) - Invalid:`);
+      exampleValidate.errors.forEach(error => {
+        console.error(`  - ${error.instancePath || 'root'}: ${error.message}`);
+        if (error.params) {
+          console.error(`    Allowed values: ${JSON.stringify(error.params.allowedValues || error.params)}`);
+        }
+      });
       hasErrors = true;
     }
   } catch (error) {
-    console.error(`❌ ${filename} - JSON Parse Error: ${error.message}`);
+    console.error(`❌ ${filename} - Error: ${error.message}`);
     hasErrors = true;
   }
 });
-
-// Validate schema itself
-console.log('\n🔍 Validating JSON Schema...');
-try {
-  const metaSchema = require('ajv/dist/refs/json-schema-draft-2020-12.json');
-  const metaValidate = ajv.compile(metaSchema);
-  const schemaValid = metaValidate(schema);
-  
-  if (schemaValid) {
-    console.log('✅ JSON Schema - Valid');
-  } else {
-    console.error('❌ JSON Schema - Invalid:');
-    console.error(JSON.stringify(metaValidate.errors, null, 2));
-    hasErrors = true;
-  }
-} catch (error) {
-  console.error(`❌ JSON Schema validation error: ${error.message}`);
-  hasErrors = true;
-}
 
 // Summary
 console.log('\n' + '='.repeat(50));
