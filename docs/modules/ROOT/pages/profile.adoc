@@ -1,0 +1,104 @@
+= CAWG ODRL Profile for C2PA
+
+== Overview
+
+The CAWG ODRL Profile for C2PA defines the specific constraints and extensions needed to use ODRL (Open Digital Rights Language) within C2PA manifests.
+
+== Profile IRI
+
+The CAWG ODRL Profile is identified by the IRI:
+
+----
+https://cawg.io/profiles/odrl-c2pa/v1
+----
+
+== Profile Terms
+
+The following terms are added to the ODRL context for C2PA binding:
+
+[cols="1,2,2"]
+|===
+|Term |Type |Description
+
+|`cawg:assertionRef`
+|IRI
+|JUMBF reference to the local CAWG Identity assertion for identity binding
+
+|`cawg:ingredient`
+|IRI
+|JUMBF reference to the single `c2pa.ingredient` used as the target scope
+
+|`cawg:actions`
+|Array of strings
+|Allowed C2PA action values: `c2pa.published`, `c2pa.transcoded`, `c2pa.repackaged`
+
+|`cawg:targetC2PA`
+|IRI
+|JUMBF of the target policy object (e.g., manifest or asset reference)
+
+|`cawg:status`
+|Enum
+|Compliance state: `valid`, `expired`, `delinquent`, `revoked`
+
+|`cawg:profile`
+|IRI
+|Profile identifier for policies
+|===
+
+== C2PA to ODRL Mapping
+
+=== Actions
+
+C2PA actions map to ODRL actions as follows:
+
+[cols="1,1"]
+|===
+|C2PA Action |ODRL Action
+
+|`c2pa.published`
+|`c2pa.published`
+
+|`c2pa.transcoded`
+|`c2pa.transcoded`
+
+|`c2pa.repackaged`
+|`c2pa.repackaged`
+|===
+
+=== Validity Constraints
+
+C2PA validity periods are expressed as ODRL constraints:
+
+----
+{
+  "constraint": [{
+    "leftOperand": "odrl:dateTime",
+    "operator": "odrl:lteq",
+    "rightOperand": "2026-12-31T23:59:59Z"
+  }]
+}
+----
+
+=== Identity Binding
+
+Parties are expressed using ODRL `assigner` and `assignee` properties, with identity verification through CAWG Identity assertions:
+
+----
+{
+  "assigner": "did:web:originvault.io",
+  "assignee": "did:web:licensee.example",
+  "cawg:assertionRef": "self#jumbf=c2pa/…/c2pa.assertions/cawg.identity"
+}
+----
+
+== Atomic Policy Requirements
+
+Following ODRL specification §2.7, policies MUST be expanded into atomic rules where:
+
+* Each permission targets exactly one Asset
+* Constraints are applied at the permission level
+* No policy-level constraints are allowed
+
+== Conflict Strategy
+
+The default conflict strategy is `invalid` unless explicitly set. This ensures that conflicting permissions result in an invalid policy rather than undefined behavior.

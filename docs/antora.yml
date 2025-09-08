@@ -1,4 +1,4 @@
-name: endorsement
+name: odrl-permissions
 version: 1.0-draft
-title: Endorsement Assertion
+title: ODRL Permissions Assertion
 start_page: index.adoc

@@ -1,0 +1,26 @@
+{
+  "label": "cawg.odrlPermissions",
+  "data": {
+    "@context": [
+      "https://www.w3.org/ns/odrl.jsonld",
+      "https://cawg.io/contexts/odrl-c2pa/v1"
+    ],
+    "@type": "Agreement",
+    "uid": "https://example.com/policy/agreement-009",
+    "profile": "https://cawg.io/profiles/odrl-c2pa/v1",
+    "assigner": "did:web:originvault.io",
+    "assignee": "did:web:distributor.example",
+    "conflict": "perm",
+    "permission": [{
+      "target": "https://example.com/asset/ingredient-123",
+      "action": "c2pa.published"
+    }],
+    "obligation": [{
+      "action": "odrl:attribute",
+      "target": "did:web:originvault.io"
+    }],
+    "cawg:assertionRef": "https://example.com/assertions/cawg.identity",
+    "cawg:ingredient": "https://example.com/assertions/c2pa.ingredient",
+    "cawg:status": "valid"
+  }
+}

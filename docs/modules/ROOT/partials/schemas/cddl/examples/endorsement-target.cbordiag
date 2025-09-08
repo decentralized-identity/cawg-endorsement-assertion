@@ -1,7 +1,0 @@
-{
-  "endorseeCredential": {
-    2: 'A SHA-256 hash of endorsee’s X.509 certificate chain'
-  },
-  "notValidBefore": 0("2021-03-21T20:04:00Z"),
-  "notValidAfter": 0("2022-03-21T20:04:00Z")
-}

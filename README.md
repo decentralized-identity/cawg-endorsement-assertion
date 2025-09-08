@@ -1,6 +1,10 @@
-# Creator Assertions Working Group :: Endorsement Assertion
+# Creator Assertions Working Group :: ODRL Permissions Assertion
 
-This repository contains the source material for the current working draft of the [Creator Assertions Working Group](https://cawg.io/)'s endorsement assertion. A rendered version of this specification can be found [here](https://cawg.io/endorsement/).
+This repository contains the source material for the current working draft of the [Creator Assertions Working Group](https://cawg.io/)'s ODRL Permissions Assertion for C2PA. This specification replaces the previous Endorsement Assertion with a standards-based approach using ODRL (Open Digital Rights Language) for encoding permissions in C2PA manifests.
+
+## Deprecation Notice
+
+The previous **Endorsement Assertion 1.0-draft** has been deprecated in favor of this ODRL Permissions Assertion. The old specification remains available for historical reference but should not be used for new implementations. See the [Migration Guide](docs/modules/ROOT/pages/migration.adoc) for details on transitioning from the Endorsement model to ODRL.
 
 ## Governance
 

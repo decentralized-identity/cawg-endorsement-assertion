@@ -1,12 +1,12 @@
-= Endorsement Assertion
+= ODRL Permissions Assertion for C2PA
 :toc: macro
 :toc-title:
 :sectanchors:
 :sectnums:
 
-An _<<_endorsement,endorsement>>_ is a way of indicating approval for specific actions made on content after it has had a _<<C2PA Manifest>>_ attached. (See xref:_generating_an_endorsement[xrefstyle=full].) The *endorsement assertion* is where an _<<_endorsement,endorsement>>_ from the signer of an ingredient _<<C2PA asset>>_ (known here as an _<<_endorser,endorser>>_) is stored. These _<<_endorsement,endorsements>>_ are typically provided (out-of-band of this specification) by ingredient _<<C2PA asset>>_ signers to actors those signers trust to perform the actions listed in the assertion (known here as _<<_endorsee,endorsees>>_). They are used by a validator when assessing whether the actions of the active _<<C2PA Manifest>>_ are “endorsed” or not. (See xref:_validation[xrefstyle=full].)
+An _ODRL Permissions Assertion_ is a C2PA assertion that encodes permissions using the Open Digital Rights Language (ODRL) standard. This specification replaces the previous Endorsement Assertion with a standards-based approach that provides better interoperability, clearer semantics, and enhanced validation capabilities for permissions in C2PA manifests.
 
-*Version 1.0 Draft 14 April 2025* · xref:_version_history[]
+*Version 1.0 Draft* · xref:_version_history[]
 
 [#maintainers]
 *Maintainers:*
@@ -24,18 +24,25 @@ _This section is non-normative._
 
 === Overview
 
-_<<_endorsement,Endorsements>>_ are a way of indicating approval of three possible actions (see xref:_permitted_actions[xrefstyle=full]) that could be applied to an _<<C2PA asset>>_ described by a _<<C2PA Manifest>>_ in which the _<<C2PA asset>>_ is used as an ingredient.
+The ODRL Permissions Assertion system establishes a standards-based permissions framework for C2PA that enables:
 
-_<<_endorsement,Endorsements>>_ endorse the specific actions (described in xref:_permitted_actions[xrefstyle=full]) that MAY be taken by the _<<_endorsee,endorsee>>_, and are therefore valid for _<<_c2pa_manifest,C2PA Manifests>>_ that use only the specified actions. Actions are only endorsed by the signer of that action’s referenced ingredient (known here as the _<<_endorser,endorser>>_); they cannot be endorsed across more than multiple _<<_c2pa_manifest,C2PA Manifests>>_ in the _<<_c2pa_asset,C2PA asset’s>>_ provenance.
+1. **ODRL-based permissions** - Standards-compliant permission encoding using ODRL 2.2
+2. **CAWG Identity binding** - Cryptographic binding to CAWG Identity assertions
+3. **C2PA integration** - Seamless integration with C2PA manifest validation
+4. **Interoperability** - Compatible with JPEG Trust and other ODRL implementations
+
+This system provides a robust permission mechanism where content creators can grant machine-readable rights using established web standards while maintaining cryptographic proof of identity and authority.
 
 === Use case
 
-As one example, an _<<_endorser,endorser>>_ may want to endorse another party, such as a content-distribution network, who will transcode its _<<C2PA asset>>_ as part of a publication workflow. The _<<_endorser,endorser>>_ creates an _<<_endorsement,endorsement>>_ that identifies the transcoder, and conveys the _<<_endorsement,endorsement>>_ to them in some method that is out-of-band from this specification. When the transcoder creates their _<<C2PA asset>>_ containing the ingredient, they include the _<<_endorsement,endorsement>>_ as an *endorsement assertion,* which lets the _<<C2PA Manifest>>_ consumer know that the actions they performed have been endorsed.
+As one example, a content creator may want to grant permission to a content-distribution network to transcode their C2PA asset as part of a publication workflow. The creator issues an ODRL Offer that identifies the licensee, references their CAWG Identity assertion for identity assurance, and includes ODRL policies that define the scope, duration, and terms of the permission. When the transcoder creates their C2PA asset containing the ingredient, they include the ODRL Agreement as a *permissions assertion,* which lets the C2PA Manifest consumer know that the actions they performed have been properly authorized.
 
 == Normative references
 
 * https://c2pa.org/specifications/specifications/2.0/specs/C2PA_Specification.html[C2PA technical specification, version 2.0]
-* https://tools.ietf.org/html/rfc5280[Internet X.509 public key infrastructure certificate] (RFC 5280)
+* https://www.w3.org/TR/odrl-vocab/[ODRL 2.2 Vocabulary & Expression]
+* https://www.w3.org/TR/json-ld11/[JSON-LD 1.1]
+* https://www.w3.org/TR/did-core/[Decentralized Identifiers (DIDs)]
 
 == Terms and definitions
 
@@ -49,211 +56,233 @@ NOTE: An organization or group of _actors_ may also be considered an _actor._
 
 A file or stream of data containing _digital content,_ _asset metadata,_ and a _<<C2PA Manifest>>_.
 
-For the purposes of this definition, we will extend the typical definition of “file” to include cloud-native and dynamically-generated data.
+For the purposes of this definition, we will extend the typical definition of "file" to include cloud-native and dynamically-generated data.
 
-IMPORTANT: The definition of “C2PA asset” in this specification differs from the definition of “asset” given in the C2PA technical specification. A “C2PA asset” as defined in _this_ specification MUST contain a _<<C2PA Manifest>>._
+IMPORTANT: The definition of "C2PA asset" in this specification differs from the definition of "asset" given in the C2PA technical specification. A "C2PA asset" as defined in _this_ specification MUST contain a _<<C2PA Manifest>>._
 
 === C2PA Manifest
 
 The set of information about the _provenance_ of a _<<C2PA asset>>_ based on the combination of one or more assertions, a single C2PA claim, and a claim signature.
 
-See link:++https://c2pa.org/specifications/specifications/2.0/specs/C2PA_Specification.html#_manifests++[Section 11, “Manifests,”] of the C2PA technical specification.
+See link:++https://c2pa.org/specifications/specifications/2.0/specs/C2PA_Specification.html#_manifests++[Section 11, "Manifests,"] of the C2PA technical specification.
 
-=== Endorsee
+=== ODRL Permissions Assertion
 
-An _<<_actor,actor>>_ who receives an _<<_endorsement,endorsement>>_ to perform a limited set of actions.
+A C2PA assertion that contains an ODRL policy (Offer or Agreement) encoded as JSON-LD, following the CAWG ODRL Profile for C2PA.
 
-=== Endorsement
+=== CAWG ODRL Profile
 
-A signed credential intended to convey approval from an _<<_endorser,endorser>>_ to perform a limited set of actions on _<<_c2pa_asset,C2PA assets>>_ on their behalf. Endorsements are not constrained to specific _<<_c2pa_asset,C2PA assets>>._
+A specific profile of ODRL 2.2 that defines the constraints and extensions needed to use ODRL within C2PA manifests, identified by the IRI `https://cawg.io/profiles/odrl-c2pa/v1`.
 
-=== Endorser
+=== Assigner
 
-An _<<_actor,actor>>_ who provides an _<<_endorsement,endorsement>>_ authorizing an _<<_endorsee,endorsee>>_ to perform a limited set of actions on any _<<C2PA asset>>_ signed by the _endorser._
+An _<<_actor,actor>>_ who grants permissions in an ODRL policy (equivalent to _licensor_ in traditional licensing).
 
-== Generating an endorsement
+=== Assignee
 
-=== Endorser workflow
+An _<<_actor,actor>>_ who receives permissions in an ODRL policy (equivalent to _licensee_ in traditional licensing).
 
-Any _<<_actor,actor>>_ MAY choose to become an _<<_endorser,endorser>>_ by producing the following outputs:
+=== CAWG Identity Assertion
 
-* a _<<C2PA asset>>_ and a corresponding _<<C2PA Manifest>>_ (which MAY be embedded in the _<<_c2pa_asset,C2PA asset>>_)
-* an _<<_endorsement,endorsement>>,_ as defined in xref:_endorsement_cose_payload[xrefstyle=full]
+A C2PA assertion that provides identity verification for the assigner and assignee in ODRL policies.
 
-IMPORTANT: An _<<_endorsement,endorsement>>_ does not convey permission to perform these actions on any specific _<<C2PA asset>>._ Therefore, an _<<_endorsement,endorsement>>_ MUST NOT be included in any _<<C2PA Manifest>>_ or _<<C2PA asset>>_ created by the _<<_endorser,endorser>>._ It SHOULD be provided separately to the _<<_endorsee,endorsee>>._
+== CAWG ODRL Profile for C2PA
 
-The relationship among _<<_endorser,endorser>>_, _<<_endorsee,endorsee>>_, and the _<<_endorser,endorser’s>>_ _<<C2PA Manifest>>_ is represented by the following diagram, which is non-normative:
+The CAWG ODRL Profile for C2PA defines the specific constraints and extensions needed to use ODRL within C2PA manifests. See xref:_profile[xrefstyle=full] for complete details.
 
-[mermaid,width=100%]
-....
-erDiagram
-    er["Endorser"] {
-        x509-cert signingCredential
-    }
-    em["Endorser’s C2PA manifest"] {
-        assertions anyAssertions
-        cose-sig claimSignature
-    }
-    oa["Endorser’s C2PA asset"] {
-        c2pa-manifest manifest
-    }
-    e["Endorsement"] {
-        der endorseeCredential
-        date notValidBefore
-        date notValidAfter
-        cose-sig endorsementSignature
-    }
-    ee["Endorsee"] {
-        x509-cert signingCredential
-    }
+=== Profile IRI
 
-    er ||--|| em: "creates and signs"
-    er ||--|| e: "creates and signs"
-    em ||--|| oa: "describes"
-    e ||--|| ee: "identifies"
-....
+The CAWG ODRL Profile is identified by the IRI:
 
-=== Endorsee workflow
-
-An _<<_endorsee,endorsee>>,_ once in possession of a _<<C2PA asset>>_ and an _<<_endorsement,endorsement>>_ signed by the same _<<_actor,actor>>_ that signed the _<<_c2pa_asset,C2PA asset’s>>_ _<<C2PA Manifest>>,_ MAY choose to perform one or more of the actions permitted in xref:_permitted_actions[xrefstyle=full], and describe those actions in a new _<<C2PA Manifest>>._
-
-The _<<_endorseee,endorsee>>_ MAY include the _<<_endorsement,endorsement>>_ by adding an *endorsement assertion* in the new _<<C2PA Manifest>>’s_ assertion store.
-
-Before generating an *endorsement assertion,* the _<<_endorsee,endorsee>>_ MUST ensure that:
-
-* exactly one link:++https://c2pa.org/specifications/specifications/2.0/specs/C2PA_Specification.html#_actions++[`c2pa.actions` assertion] exists in the _<<C2PA Manifest>>,_
-* only the actions listed under xref:_permitted_actions[xrefstyle=full] are present in the actions assertion,
-* exactly one link:++https://c2pa.org/specifications/specifications/2.0/specs/C2PA_Specification.html#_ingredient++[ingredient assertion] is present in the assertion store, and,
-* that ingredient is the one referenced by the actions assertion’s `parameters.ingredient` field.
-
-The *endorsement assertion* MUST have a label of `cawg.endorsement`. The assertion contents MUST be a `COSE_Sign1_Tagged` structure that is created as defined in xref:_endorsement_cose_payload[xrefstyle=full].
-
-There MUST NOT be more than one *endorsement assertion* in any _<<C2PA Manifest>>._
-
-The relationship between the _<<_endorser,endorser’s>>_ _<<C2PA asset>>_ and the _<<_endorsee,endorsee’s>>_ _<<C2PA asset>>_ is illustrated by the following diagram, which is non-normative:
-
-[mermaid,width=100%]
-....
-erDiagram
-    oa["Endorser’s C2PA asset"] {
-        c2pa-manifest manifest
-    }
-    aa["Actions assertion"] {
-        list actionsPerformed
-    }
-    ia["Ingredient assertion"] {
-        ref endorsersAsset
-    }
-    e["Endorsement"] {
-        any endorseeCredential
-        date notValidBefore
-        date notValidAfter
-        cose-sig endorsementSignature
-    }
-    ea["Endorsement assertion"] {
-        ref endorsement
-    }
-    ee["Endorsee"] {
-        x509-cert signingCredential
-    }
-    eas["Endorsee’s C2PA asset"] {
-        c2pa-manifest manifest
-    }
-    eem["Endorsee’s C2PA manifest"] {
-        assertion ingredients
-        assertion actions
-        assertion endorsement
-        cose-sig claimSignature
-    }
-
-    oa ||--|| ia: "referenced by"
-    ee ||--|| eem: "creates and signs"
-    ee ||--|| aa: "creates"
-    e ||--|| ea: "included in"
-    aa ||--|| eem: "included in"
-    ia ||--|| eem: "included in"
-    ea ||--|| eem: "included in"
-    eem ||--|| eas: "describes"
-
-....
-
-=== Permitted actions
-
-The link:++https://c2pa.org/specifications/specifications/2.0/specs/C2PA_Specification.html#_actions++[`c2pa.actions` assertion] in a _<<C2PA Manifest>>_ containing an *endorsement assertion* MAY contain any of the following action codes:
-
-* `c2pa.published`
-* `c2pa.transcoded`
-* `c2pa.repackaged`
-
-The actions assertion MUST NOT contain any other action codes.
-
-=== Endorsement COSE payload
-
-_<<_endorsement,Endorsements>>_ are COSE objects (see link:++https://c2pa.org/specifications/specifications/2.0/specs/C2PA_Specification.html#_digital_signatures++[Section 13.2, “Digital Signatures,” of the C2PA 2.0 Technical Specification]), where the COSE payload is an “endorsement target” data structure encoded as CBOR, as shown below. The `endorseeCredential` field is an object with a single field, labelled according to the type of credential used to sign the _<<_endorsement,endorsement>>._ The label of this field indicates to validators the type of the credential present, so that they know how to decode, parse and validate the credential correctly. The following table details the format of each of the currently specified credential types:
-
-==== Endorsement credential types
-
-[col="2,1,4,4"]
-|===
-|Credential name |CBOR label |Value type |Compares To
-
-|Reserved
-|0
-|
-|
-
-|Reserved _(deprecated)_
-|1
-|This CBOR label was used in link:https://c2pa.org/specifications/specifications/1.4/specs/C2PA_Specification.html#_endorsement_credential_types[a prior version of the endorsement assertion specification] and should no longer be used.
-|n/a
-
-|X.509 Certificate Hash
-|2
-|A SHA-256 hash of the _endorsee’s_ X.509 certificate chain that will be used for signing the claims of _<<_c2pa_asset,C2PA assets>>_ that this _<<_endorsement,endorsement>>_ is expected to be used with.
-|The value of the credential shall be compared (bitwise identical) to a SHA-256 hash of the entire certificate chain located in the `x5chain` or `33` (integer) COSE header of the active _<<C2PA Manifest>>_ claim signature. (See link:++https://c2pfa.org/specifications/specifications/2.0/specs/C2PA_Specification.html#x509_certificates++[Section 14.6, “X.509 Certificates,” of the C2PA 2.0 Technical Specification].)
-|===
-
-_<<_endorser,Endorsers>>_ SHALL place the credential of the signer they are endorsing (the _<<_endorsee,endorsee>>_) and its type in the `endorseeCredential`. To limit the length of time that an _<<_endorser,endorser>>_ is lending their _<<_endorsement,endorsement>>_ to the _<<_endorsee,endorsee>>,_ the `notValidBefore` and `notValidAfter` fields MUST contain ISO 8601 date times.
-
-The schema for the endorsement target type is defined by the `endorsement-target-map` rule in the following https://datatracker.ietf.org/doc/html/rfc8610[CDDL Definition]:
-
-[source,cddl]
 ----
-include::partial$schemas/cddl/endorsement-target.cddl[]
+https://cawg.io/profiles/odrl-c2pa/v1
 ----
 
-An example endorsement target is shown below:
+=== Key Features
+
+* **Pure ODRL**: Uses standard ODRL 2.2 classes and properties
+* **C2PA Binding**: Extends ODRL with C2PA-specific linking mechanisms
+* **Identity Verification**: Cryptographic binding to CAWG Identity assertions
+* **Atomic Policies**: Enforces ODRL atomic policy requirements
+* **Conflict Resolution**: Default conflict strategy of `invalid`
+
+=== Allowed Actions
+
+The profile restricts ODRL actions to the following C2PA-safe values:
+
+* `c2pa.published` - Permission to publish the asset
+* `c2pa.transcoded` - Permission to transcode the asset  
+* `c2pa.repackaged` - Permission to repackage the asset
+
+== Identity Binding
+
+=== CAWG Identity Assertion Requirement
+
+The `assigner` and `assignee` in ODRL policies MUST be verifiable via a CAWG Identity assertion in the same manifest. The `cawg:assertionRef` property MUST point to that CAWG Identity assertion using a JUMBF self-link.
+
+=== Cryptographic Verification
+
+Validators MUST check cryptographic continuity between the CAWG Identity assertion and the signer of the relevant claim (assigner/assignee roles). This ensures that the identities in the ODRL policy are cryptographically bound to the manifest signer.
+
+== Target Binding
+
+=== Ingredient Reference
+
+The policy's `target` MUST reference the asset via JUMBF or via `cawg:ingredient` that resolves to the single `c2pa.ingredient` referenced by `c2pa.actions`.
+
+=== Atomic Requirements
+
+Following ODRL specification §2.7, policies MUST be expanded into atomic rules where each permission targets exactly one Asset.
+
+== Offer → Agreement Path (Countersign)
+
+=== Offer Phase
+
+An _<<_assigner,assigner>>_ publishes an ODRL Offer containing the terms and conditions for permission to use their C2PA asset. The Offer includes:
+
+* `@type`: `Offer`
+* `assigner`: The licensor's identity
+* `permission`: Array of permitted actions and constraints
+* `cawg:assertionRef`: Reference to CAWG Identity assertion
+* `cawg:ingredient`: Reference to the ingredient assertion
+
+=== Agreement Phase
+
+A _<<_assignee,assignee>>_ accepts the Offer by including an ODRL Agreement in an update manifest. The Agreement includes:
+
+* `@type`: `Agreement`
+* `assignee`: The licensee's identity (bound to their CAWG Identity assertion)
+* `inheritFrom`: Reference to the original Offer's `uid`
+* Same `permission` structure as the Offer
+* Optional `obligation` for additional duties
+
+=== Validation Requirements
+
+Validators MUST regard an Agreement that inherits or restates the Offer with the same `uid` (or `inheritFrom`) as acceptance of the original Offer terms.
+
+== Validation Algorithm
+
+The validation algorithm for ODRL Permissions Assertions follows these normative steps. See xref:_validation[xrefstyle=full] for complete details.
+
+=== Preconditions
+
+The validator MUST ensure the following preconditions are met:
+
+1. Exactly one `c2pa.actions` assertion exists in the manifest
+2. Exactly one relevant `c2pa.ingredient` assertion exists and is linked
+3. One ODRL policy assertion per policy being evaluated
+4. All required CAWG Identity assertions are present
+
+=== Validation Steps
+
+1. **Atomic Expansion**: Expand compact ODRL policies into atomic rules
+2. **Profile Validation**: Check profile matches CAWG ODRL profile IRI
+3. **Identity Binding**: Verify assigner/assignee against CAWG Identity assertion
+4. **Target Binding**: Verify ingredient binding via JUMBF references
+5. **Constraint Evaluation**: Evaluate all constraints (date, territory, etc.)
+6. **Obligation Evaluation**: Evaluate machine-checkable obligations only
+7. **Conflict Resolution**: Apply conflict strategy (default: `invalid`)
+8. **Status Attestation**: Handle optional status attestations
+
+=== Result Classification
+
+The validator MUST return one of:
+* `valid` - All checks pass
+* `valid-with-nonverifiable-obligations` - Valid but has non-machine-checkable obligations
+* `invalid` - One or more checks fail
+* `indeterminate` - Cannot determine validity due to missing information
+
+== Interoperability with JPEG Trust
+
+This profile uses vanilla ODRL and JSON-LD, making it compatible with JPEG Trust guidance. The CAWG ODRL Profile adds the missing identity/target/validation specifics needed for C2PA integration while maintaining full ODRL compliance.
+
+=== Key Interoperability Features
+
+* **Standard ODRL**: Uses ODRL 2.2 classes and properties without modification
+* **JSON-LD Context**: Extends ODRL context with C2PA-specific terms
+* **Profile-based**: Uses ODRL profile mechanism for C2PA constraints
+* **Reference Compatibility**: Can be referenced by CAWG Identity per JPEG Trust guidance
+
+== Security and Privacy
+
+See xref:_security-privacy[xrefstyle=full] for detailed security and privacy considerations including:
+
+* JUMBF spoofing prevention
+* Identity replay protection
+* Clock skew handling
+* Status attestation trust
+* Down-rev profile risks
+
+== Migration from Endorsement
+
+See xref:_migration[xrefstyle=full] for guidance on migrating from the previous Endorsement Assertion to ODRL Permissions Assertion.
+
+=== Key Changes
+
+* **Structure**: Flat endorsement structure → Hierarchical ODRL structure
+* **Identity**: COSE signature → Manifest signature + CAWG Identity assertion
+* **Validity**: Direct date fields → ODRL constraints
+* **Actions**: `c2pa.actions` array → `action` within `permission` array
+
+== Examples
+
+=== Minimal Offer
 
 [source,json]
 ----
-include::partial$schemas/cddl/examples/endorsement-target.cbordiag[]
+{
+  "@context": [
+    "https://www.w3.org/ns/odrl.jsonld",
+    "https://cawg.io/contexts/odrl-c2pa/v1"
+  ],
+  "@type": "Offer",
+  "uid": "urn:uuid:odrl-offer-123",
+  "profile": "https://cawg.io/profiles/odrl-c2pa/v1",
+  "assigner": "did:web:originvault.io",
+  "permission": [{
+    "target": "self#jumbf=c2pa/…/c2pa.assertions/c2pa.ingredient",
+    "action": "c2pa.transcoded",
+    "constraint": [{
+      "leftOperand": "odrl:dateTime",
+      "operator": "odrl:lteq",
+      "rightOperand": "2026-12-31T23:59:59Z"
+    }]
+  }],
+  "cawg:assertionRef": "self#jumbf=c2pa/…/c2pa.assertions/cawg.identity",
+  "cawg:ingredient": "self#jumbf=c2pa/…/c2pa.assertions/c2pa.ingredient"
+}
 ----
 
-To sign an _<<_endorsement,endorsement>>,_ follow the procedure specified in link:++https://c2pa.org/specifications/specifications/2.0/specs/C2PA_Specification.html#_digital_signatures++[Section 13.2, “Digital Signatures,” of the C2PA 2.0 Technical Specification], using the serialised CBOR `endorsement-target` object as the contents of the payload field. An _<<_endorser,endorser>>_ SHALL NOT include a `x5chain` header and value, as _<<_endorsement,endorsements>>_ are validated in the context of their use as an ingredient, and therefore use the signing credential of that ingredient _<<C2PA Manifest>>._ (See xref:_validation[xrefstyle=full].)
+=== Agreement (Acceptance)
 
-The serialized `COSE_Sign1_Tagged` structure resulting from the digital signature procedure is the _<<_endorsement,endorsement>>_ that MAY be conveyed to the _<<_endorsee,endorsee>>_ identified in the `endorsement-target`, but the process for conveying it is out of scope of this specification.
-
-== Validation
-
-Validation of an *endorsement assertion* SHALL only be attempted if the active _<<C2PA Manifest>>_ first meets a number of conditions:
-
-* There is exactly one link:++https://c2pa.org/specifications/specifications/2.0/specs/C2PA_Specification.html#_actions++[actions assertion] present in the assertion store.
-* There is exactly one link:++https://c2pa.org/specifications/specifications/2.0/specs/C2PA_Specification.html#_ingredient++[ingredient assertion].
-* There is exactly one *endorsement assertion.*
-
-For each `action` object in the link:++https://c2pa.org/specifications/specifications/2.0/specs/C2PA_Specification.html#_actions++[actions assertion]:
-
-. Check that the `action` field is set to `c2pa.published`, `c2pa.transcoded`, or `c2pa.repackaged`. If any other action is present, fail the *endorsement assertion* validation process for this _<<C2PA Manifest>>_ and do not proceed with further validation.
-. Check the `ingredient` field that is a member of the `parameters` object for the presence of a JUMBF URI. If the JUMBF URI is not present, or cannot be resolved to the related ingredient assertion, fail the *endorsement assertion* validation process for this _<<C2PA Manifest>>_ and do not proceed with further validation.
-. Follow the JUMBF URI link in the `ingredient` field to the ingredient assertion. Check that the URI link resolves to the single ingredient assertion in the active _<<C2PA Manifest>>._ If it does not, fail the *endorsement assertion* validation process for this _<<C2PA Manifest>>_ and do not proceed with further validation. Check that the `relationship` field is `parentOf`. If it is not, fail the *endorsement assertion* validation process for this _<<C2PA Manifest>>_ and do not proceed with further validation.
-. Check the `c2pa_manifest` field in the ingredient assertion for the presence of a hashed URI. If the hashed URI is not present, or cannot be resolved to a _<<C2PA Manifest>>,_ fail the *endorsement assertion* validation process for this _<<C2PA Manifest>>_ and do not proceed with further validation.
-. Follow the JUMBF URI link in the `c2pa_manifest` field to the ingredient’s _<<C2PA Manifest>>._ Ensure that this _ingredient_ _<<C2PA Manifest>>_ has been validated according to link:++https://c2pa.org/specifications/specifications/2.0/specs/C2PA_Specification.html#_recursively_validating_integrity_of_ingredients++[Section 15.8, “Recursively validating integrity of ingredients,” of the C2PA 2.0 Technical Specification], but do not skip the establishing of signer credential trust. If it does not validate, fail the *endorsement assertion* validation process for this _<<C2PA Manifest>>_ and do not proceed with further validation.
-. Validate the endorsement as described in link:++https://c2pa.org/specifications/specifications/2.0/specs/C2PA_Specification.html#_recursively_validating_integrity_of_ingredients++[Section 15.4, “Validate the signature,” of the C2PA Technical Specification], using the credential of the ingredient _<<C2PA Manifest>>_ signer. If a signing credential is present in the endorsement’s signature’s headers, it shall not be used for validation. If validation fails, fail the *endorsement assertion* validation process for this _<<C2PA Manifest>>_ and do not proceed with further validation.
-. Validate the `endorsement-target` payload itself, following the steps below:
-.. Compare the `endorseeCredential` to the SHA-256 hash of the credential of the active _<<C2PA Manifest>>_ signer, according to the table found in xref:_endorsement_credential_types[xrefstyle=full]. If the comparison fails, fail the *endorsement assertion* validation process for this _<<C2PA Manifest>>_ and do not proceed with further validation.
-.. If the active _<<C2PA Manifest>>_ is timestamped, then the _time-stamp_ must fall within the endorsement’s validity time range. If it does not, fail the *endorsement assertion* validation process for this _<<C2PA Manifest>>_ and do not proceed with further validation.
-.. If the active _<<C2PA Manifest>>_ is not timestamped, then the _time of validation_ must fall within the endorsement’s validity time range. If it does not, fail the *endorsement assertion* validation process for this _<<C2PA Manifest>>_ and do not proceed with further validation.
-
-If all steps above have been completed without failure, the *endorsement assertion* SHOULD be considered valid.
+[source,json]
+----
+{
+  "@context": [
+    "https://www.w3.org/ns/odrl.jsonld",
+    "https://cawg.io/contexts/odrl-c2pa/v1"
+  ],
+  "@type": "Agreement",
+  "uid": "urn:uuid:odrl-agreement-456",
+  "inheritFrom": "urn:uuid:odrl-offer-123",
+  "profile": "https://cawg.io/profiles/odrl-c2pa/v1",
+  "assigner": "did:web:originvault.io",
+  "assignee": "did:web:licensee.example",
+  "permission": [{
+    "target": "self#jumbf=c2pa/…/c2pa.assertions/c2pa.ingredient",
+    "action": "c2pa.transcoded"
+  }],
+  "obligation": [{
+    "action": "odrl:attribute",
+    "constraint": [{
+      "leftOperand": "odrl:attribution",
+      "operator": "odrl:eq",
+      "rightOperand": "© Jane Creator via OriginVault"
+    }]
+  }],
+  "cawg:assertionRef": "self#jumbf=c2pa/…/c2pa.assertions/cawg.identity",
+  "cawg:ingredient": "self#jumbf=c2pa/…/c2pa.assertions/c2pa.ingredient"
+}
+----
 
 include::partial$version-history.adoc[]

@@ -1,7 +1,20 @@
 {
+  "name": "cawg-odrl-permissions-assertion",
+  "version": "1.0.0-draft",
+  "description": "ODRL Permissions Assertion for C2PA - CAWG specification",
+  "scripts": {
+    "build:docs": "antora antora-playbook-local.yml",
+    "lint:schema": "node tools/validate.js",
+    "lint:links": "markdown-link-check -q **/*.adoc **/*.md",
+    "test": "npm run lint:schema && npm run build:docs && npm run lint:links"
+  },
   "devDependencies": {
     "@antora/cli": "3.1.4",
     "@antora/site-generator": "3.1.4",
-    "@sntke/antora-mermaid-extension": "^0.0.4"
+    "@sntke/antora-mermaid-extension": "^0.0.4",
+    "ajv": "^8.12.0",
+    "ajv-formats": "^2.1.1",
+    "markdown-link-check": "^3.11.2",
+    "c8": "^8.0.1"
   }
 }

@@ -1,0 +1,238 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cawg.io/schemas/odrl-c2pa/v1.0/c2pa-assertion-wrapper",
+  "title": "C2PA ODRL Permissions Assertion Wrapper",
+  "description": "JSON Schema for C2PA assertion that contains an ODRL policy",
+  "type": "object",
+  "required": [
+    "label",
+    "data"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "label": {
+      "type": "string",
+      "const": "cawg.odrlPermissions",
+      "description": "C2PA assertion label for ODRL permissions"
+    },
+    "data": {
+      "$ref": "#/$defs/ODRLPolicy",
+      "description": "The ODRL policy (Offer or Agreement) contained in this assertion"
+    }
+  },
+  "$defs": {
+    "ODRLPolicy": {
+      "type": "object",
+      "required": [
+        "@context",
+        "@type",
+        "profile",
+        "permission",
+        "cawg:assertionRef",
+        "cawg:ingredient"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "@context": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 2,
+          "allOf": [
+            { "contains": { "const": "https://www.w3.org/ns/odrl.jsonld" } },
+            { "contains": { "const": "https://cawg.io/contexts/odrl-c2pa/v1" } }
+          ]
+        },
+        "@type": {
+          "type": "string",
+          "enum": ["Offer", "Agreement"]
+        },
+        "uid": {
+          "type": "string",
+          "format": "uri"
+        },
+        "inheritFrom": {
+          "type": "string",
+          "format": "uri"
+        },
+        "profile": {
+          "type": "string",
+          "const": "https://cawg.io/profiles/odrl-c2pa/v1"
+        },
+        "assigner": {
+          "type": "string",
+          "format": "uri"
+        },
+        "assignee": {
+          "type": "string",
+          "format": "uri"
+        },
+        "conflict": {
+          "type": "string",
+          "enum": ["perm", "prohibit", "invalid"]
+        },
+        "validFrom": { "type": "string", "format": "date-time" },
+        "validUntil": { "type": "string", "format": "date-time" },
+        "permission": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/Permission" }
+        },
+        "prohibition": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Prohibition" }
+        },
+        "obligation": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Obligation" }
+        },
+        "cawg:assertionRef": {
+          "type": "string",
+          "format": "uri"
+        },
+        "cawg:ingredient": {
+          "type": "string",
+          "format": "uri"
+        },
+        "cawg:targetC2PA": {
+          "type": "string",
+          "format": "uri"
+        },
+        "cawg:status": {
+          "type": "string",
+          "enum": ["valid", "expired", "delinquent", "revoked"]
+        }
+      }
+    },
+    "ActionValue": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": ["c2pa.published", "c2pa.transcoded", "c2pa.repackaged"]
+        },
+        {
+          "type": "object",
+          "required": ["rdf:value"],
+          "additionalProperties": false,
+          "properties": {
+            "rdf:value": {
+              "type": "string",
+              "enum": ["c2pa.published", "c2pa.transcoded", "c2pa.repackaged"]
+            },
+            "refinement": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/Constraint" }
+            }
+          }
+        }
+      ]
+    },
+    "Permission": {
+      "type": "object",
+      "required": ["target", "action"],
+      "additionalProperties": false,
+      "properties": {
+        "target": { "type": "string", "format": "uri" },
+        "action": { "$ref": "#/$defs/ActionValue" },
+        "constraint": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Constraint" }
+        }
+      }
+    },
+    "Prohibition": {
+      "type": "object",
+      "required": ["target", "action"],
+      "additionalProperties": false,
+      "properties": {
+        "target": { "type": "string", "format": "uri" },
+        "action": { "$ref": "#/$defs/ActionValue" },
+        "constraint": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Constraint" }
+        }
+      }
+    },
+    "Obligation": {
+      "type": "object",
+      "required": ["action"],
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": [
+            "odrl:attribute",
+            "odrl:compensate",
+            "odrl:delete",
+            "odrl:distribute",
+            "odrl:modify",
+            "odrl:move",
+            "odrl:nextPolicy",
+            "odrl:obtainConsent",
+            "odrl:pay",
+            "odrl:read",
+            "odrl:reproduce",
+            "odrl:reviewPolicy",
+            "odrl:uninstall",
+            "odrl:watermark"
+          ]
+        },
+        "target": { "type": "string", "format": "uri" },
+        "constraint": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Constraint" }
+        },
+        "consequence": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Obligation" }
+        }
+      }
+    },
+    "Constraint": {
+      "type": "object",
+      "required": ["leftOperand", "operator", "rightOperand"],
+      "additionalProperties": false,
+      "properties": {
+        "leftOperand": {
+          "type": "string",
+          "enum": [
+            "odrl:dateTime",
+            "odrl:event",
+            "odrl:media",
+            "odrl:recipient",
+            "odrl:spatial",
+            "odrl:system",
+            "odrl:timeInterval",
+            "odrl:unitOfCount",
+            "odrl:virtualLocation"
+          ]
+        },
+        "operator": {
+          "type": "string",
+          "enum": [
+            "odrl:eq",
+            "odrl:gt",
+            "odrl:gteq",
+            "odrl:lt",
+            "odrl:lteq",
+            "odrl:neq",
+            "odrl:isA",
+            "odrl:hasPart",
+            "odrl:isPartOf",
+            "odrl:isAllOf",
+            "odrl:isAnyOf",
+            "odrl:isNoneOf"
+          ]
+        },
+        "rightOperand": {
+          "oneOf": [
+            { "type": "string" },
+            { "type": "number" },
+            { "type": "boolean" },
+            { "type": "array" }
+          ]
+        },
+        "unit": { "type": "string" }
+      }
+    }
+  }
+}
